@@ -1,0 +1,273 @@
+% !TeX program = xelatex
+\documentclass[11pt,a4paper]{article}
+\usepackage{fontspec}
+\setmainfont{DejaVu Serif}[ItalicFont={DejaVu Serif},ItalicFeatures={FakeSlant=0.2}]
+\setsansfont{DejaVu Sans}
+\usepackage{polyglossia}
+\setdefaultlanguage{ukrainian}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=24mm]{geometry}
+\usepackage{booktabs,array}
+\usepackage{microtype}
+\usepackage{ragged2e}
+\AtBeginDocument{\RaggedRight}
+\setlength{\emergencystretch}{3em}
+\usepackage[unicode,colorlinks=true,linkcolor=black,urlcolor=blue]{hyperref}
+\newtheorem{definition}{Означення}[section]
+\newtheorem{theorem}[definition]{Теорема}
+\newtheorem{proposition}[definition]{Твердження}
+\theoremstyle{remark}
+\newtheorem{remark}[definition]{Зауваження}
+\newtheorem{example}[definition]{Приклад}
+\newcommand{\R}{\mathbb R}
+\newcommand{\xh}{\widehat x}
+\newcommand{\yh}{\widehat y}
+\DeclareMathOperator{\sgn}{sgn}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\title{\sffamily Похибки і довіра до результату\\[4pt]\large Математичний конспект лекції 2}
+\author{Інформатика та інформаційні технології}
+\date{}
+\begin{document}
+\maketitle
+\vspace{-1.5em}
+\textbf{Домовленість.} Величина без шапки позначає точне значення, із шапкою --- наближене. Числа $E$ та $E_i$ є заданими або доведеними невід'ємними верхніми межами абсолютних похибок. Усі наведені строгі нерівності стосуються точної дійсної арифметики; похибку машинної реалізації враховують окремо.
+
+\section{Джерела похибки}
+Нехай $y_{\mathrm{real}}\in\R$ --- реальне значення величини, $F$ --- прийнята модель, $d$ --- точні дані, $\widehat d$ --- наближені дані. Позначимо
+\[
+ y_0=F(d),\qquad y_1=F(\widehat d),\qquad y_2=A_h(\widehat d),
+\]
+де $A_h$ --- чисельний метод із параметром $h$, виконаний у точній арифметиці. Нехай $\yh$ --- результат його машинної реалізації.
+\begin{definition}
+Знакові складові повної похибки визначено рівностями
+\begin{align*}
+ \varepsilon_{\mathrm{mod}}&=y_{\mathrm{real}}-y_0,&
+ \varepsilon_{\mathrm{data}}&=y_0-y_1,\\
+ \varepsilon_{\mathrm{method}}&=y_1-y_2,&
+ \varepsilon_{\mathrm{round}}&=y_2-\yh.
+\end{align*}
+Їхні модулі характеризують відповідно похибку моделі, вплив похибки даних, похибку методу та похибку машинного подання й арифметики.
+\end{definition}
+\begin{proposition}[Бюджет повної похибки]
+Якщо $|\varepsilon_j|\le E_j$ для всіх чотирьох складових, то
+\begin{equation}
+ |y_{\mathrm{real}}-\yh|\le E_{\mathrm{mod}}+E_{\mathrm{data}}+E_{\mathrm{method}}+E_{\mathrm{round}}.
+\end{equation}
+\end{proposition}
+\begin{proof}
+Додавання проміжних значень дає точну тотожність
+\[
+ y_{\mathrm{real}}-\yh=\varepsilon_{\mathrm{mod}}+\varepsilon_{\mathrm{data}}+\varepsilon_{\mathrm{method}}+\varepsilon_{\mathrm{round}}.
+\]
+Застосовуємо нерівність трикутника та відомі межі складових.
+\end{proof}
+Усі $E_j$ мають одиницю вихідної величини. Незалежність складових не потрібна. Можлива компенсація знакових внесків не порушує оцінки. Невідома межа не може бути замінена нулем.
+\begin{example}
+Для $E_{\mathrm{mod}}=0{,}40$, $E_{\mathrm{data}}=0{,}20$, $E_{\mathrm{method}}=0$, $E_{\mathrm{round}}=0{,}01$ маємо повну межу $0{,}61$ в одиницях результату. Заміна першої межі на $0{,}08$ за незмінних інших дає $0{,}29$.
+\end{example}
+\begin{remark}
+Наведений розклад передбачає коректно визначені модель, дані й алгоритм. Програмні дефекти та порушення умов задачі не оцінюються автоматично межею округлення.
+\end{remark}
+
+\section{Абсолютна і відносна похибки}
+\begin{definition}
+Для $x,\xh\in\R$ абсолютна похибка наближення $\xh$ дорівнює
+\[
+ \Delta=|x-\xh|.
+\]
+Відоме число $E\ge0$, для якого $\Delta\le E$, називаємо граничною абсолютною похибкою. Воно не обов'язково є найменшою можливою межею.
+\end{definition}
+Еквівалентні форми гарантії:
+\begin{equation}
+ |x-\xh|\le E\quad\Longleftrightarrow\quad \xh-E\le x\le\xh+E.
+\end{equation}
+\begin{definition}
+Для $x\ne0$ відносна похибка дорівнює
+\[
+ \delta=\frac{|x-\xh|}{|x|}.
+\]
+Відоме число $D\ge0$, для якого $\delta\le D$, є граничною відносною похибкою. Відсотковий запис: $100\delta\,\%$.
+\end{definition}
+При одночасній зміні масштабу $x'=cx$, $\widehat{x'}=c\xh$, де $c\ne0$, маємо $\Delta'=|c|\Delta$ та $\delta'=\delta$. Для $x=0$ відносна похибка не визначена.
+\begin{theorem}[Відносна межа за наближеним значенням]
+Нехай $|x-\xh|\le E$ і $|\xh|>E$. Тоді $x\ne0$ та
+\begin{equation}\label{eq:relative}
+ \delta\le\frac{E}{|\xh|-E}.
+\end{equation}
+\end{theorem}
+\begin{proof}
+Обернена нерівність трикутника дає
+\[
+ |x|\ge|\xh|-|x-\xh|\ge|\xh|-E>0.
+\]
+У чисельнику відносної похибки використовуємо верхню межу $E$, а в знаменнику --- додатну нижню межу $|\xh|-E$.
+\end{proof}
+\begin{remark}
+Умова $|\xh|>E$ означає, що інтервал допустимих значень не містить нуля. Якщо $\xh\ne0$ та $E\ge|\xh|$, відносна похибка на допустимих ненульових значеннях необмежена. Якщо $\xh=0$, то для кожного допустимого $x\ne0$ маємо $\delta=1$, але для $x=0$ вона все одно не визначена. Формула \eqref{eq:relative} за $|\xh|\le E$ не застосовується.
+\end{remark}
+\begin{example}
+Для $\xh=99$ та $E=1$ маємо $x\in[98;100]$ і $D=1/98\approx0{,}0102041$. Якщо додатково відомо $x=100$, фактична похибка $\Delta=1$, $\delta=0{,}01$. Межа й фактична похибка різні.
+\end{example}
+\begin{example}
+При $x_1=100$, $\widehat x_1=99$ та $x_2=10$, $\widehat x_2=9$ абсолютні похибки дорівнюють $1$, а відносні відповідно $1\%$ і $10\%$.
+\end{example}
+Для заданого абсолютного допуску $T\ge0$ умова прийнятності щодо точного еталона має вигляд $|x-\xh|\le T$. Цей допуск є вимогою до результату, а не автоматично відомою межею похибки вимірювання.
+
+\section{Значущі цифри та округлення}
+\subsection*{Десятковий порядок і значущі розряди}
+Значущі цифри скінченного десяткового запису починаються з першої ненульової цифри. Початкові нулі визначають положення коми; внутрішні нулі є значущими. Кінцеві нулі враховують як значущі, коли запис явно задає збережені розряди. Для уникнення неоднозначності цілих записів використовують науковий запис.
+
+Для $\xh\ne0$ єдине $m\in\mathbb Z$, що задовольняє
+\[
+ 10^m\le|\xh|<10^{m+1},
+\]
+називаємо десятковим порядком. Одиниця $n$-го значущого розряду, $n\ge1$, дорівнює
+\begin{equation}
+ q_n=10^{m-n+1}.
+\end{equation}
+Наприклад, $0{,}00450=4{,}50\cdot10^{-3}$ має три значущі цифри та п'ять знаків після коми; $1{,}20\cdot10^3$ має три значущі цифри.
+
+\subsection*{Вірні знаки}
+\begin{definition}
+За вузьким критерієм $n$ значущих розрядів наближення $\xh\ne0$ вважаємо вірними, якщо $\Delta\le q_n/2$. За широким критерієм достатньо $\Delta\le q_n$.
+\end{definition}
+Якщо відома лише межа $\Delta\le E$, достатні умови гарантованої вірності відповідно
+\begin{equation}
+ E\le\frac12\,10^{m-n+1},\qquad E\le10^{m-n+1}.
+\end{equation}
+Якщо запис містить $p$ значущих цифр, число гарантовано вірних серед записаних за вузьким критерієм визначається як
+\[
+ N=\max\bigl(\{0\}\cup\{n\in\{1,\ldots,p\}: E\le\tfrac12\,10^{m-n+1}\}\bigr).
+\]
+Це числовий критерій точності розряду, а не загальна гарантія буквального збігу десяткових префіксів поблизу перенесення через розряд. Невиконання достатньої умови для межі $E$ не доводить невірності знака: фактична $\Delta$ може бути меншою. Для $\xh=0$ використовують абсолютну межу й явно вказаний розряд.
+\begin{example}
+Для $\xh=12{,}35$, $E=0{,}004$ маємо $m=1$. При $n=4$ поріг дорівнює $0{,}005$, тому чотири розряди гарантовано вірні у вузькому сенсі. Для $n=5$ потрібен поріг $0{,}0005$, якого наявна межа не забезпечує.
+\end{example}
+
+\subsection*{Правила округлення}
+\begin{definition}
+За $u>0$ позначимо $R_u(x)$ один із найближчих до $x$ вузлів сітки $u\mathbb Z$. Якщо найближчих вузлів два, правило вибору фіксують заздалегідь. За правилом до парного обирають $ku$ з парним цілим $k$.
+\end{definition}
+\begin{theorem}
+Для кожного $x\in\R$ справджується
+\begin{equation}
+ |x-R_u(x)|\le\frac u2.
+\end{equation}
+\end{theorem}
+\begin{proof}
+Число $x$ лежить між двома сусідніми вузлами сітки або збігається з вузлом. Відстань до найближчого не перевищує половини відстані $u$ між сусідніми вузлами.
+\end{proof}
+Для округлення до $k$ знаків після коми $u=10^{-k}$. Для відкидання до нуля
+\[
+ T_u(x)=u\,\sgn(x)\left\lfloor\frac{|x|}{u}\right\rfloor,
+ \qquad |x-T_u(x)|<u.
+\]
+Зокрема, $R_{0{,}01}(12{,}347)=12{,}35$ із похибкою $0{,}003\le0{,}005$.
+
+\begin{proposition}[Округлення наближеного числа]
+Якщо $|x-\xh|\le E$, то
+\begin{equation}
+ |x-R_u(\xh)|\le E+|\xh-R_u(\xh)|\le E+\frac u2.
+\end{equation}
+\end{proposition}
+\begin{proof}
+Застосовуємо нерівність трикутника до різниці $x-\xh+\xh-R_u(\xh)$.
+\end{proof}
+При $\xh=12{,}347$, $E=0{,}002$, $u=0{,}01$ універсальна межа дорівнює $0{,}007$, а межа з відомим зсувом округлення дорівнює $0{,}005$.
+
+Загалом округлення не комутує з підсумовуванням:
+\[
+ \sum_{i=1}^kR_u(x_i)\ne R_u\!\left(\sum_{i=1}^kx_i\right).
+\]
+Для точної суми й точних операцій
+\[
+ \left|\sum_{i=1}^kR_u(x_i)-\sum_{i=1}^kx_i\right|\le\frac{ku}{2},\qquad
+ \left|R_u\!\left(\sum_{i=1}^kx_i\right)-\sum_{i=1}^kx_i\right|\le\frac u2.
+\]
+Машинне подання десяткових входів та арифметичні операції можуть додавати окремі похибки.
+
+\section{Поширення похибок}
+Нехай $f:\R^n\supset U\to\R$, $x=\xh+h$, $|h_i|\le E_i$. У цьому розділі оцінюємо вплив похибок аргументів на точне значення функції, без додаткової похибки машинного обчислення.
+
+\subsection*{Локальна оцінка першого порядку}
+Якщо $f$ диференційовна в $\xh$, то
+\begin{equation}\label{eq:taylor}
+ f(\xh+h)-f(\xh)=\sum_{i=1}^n\partial_i f(\xh)h_i+r(h),
+ \qquad \frac{r(h)}{\|h\|_2}\longrightarrow0\quad(h\to0).
+\end{equation}
+Для $h=0$ залишок дорівнює нулю. Величина
+\begin{equation}
+ L=\sum_{i=1}^n|\partial_i f(\xh)|E_i
+\end{equation}
+обмежує модуль лінійної частини, але без оцінки $r(h)$ не є загальною гарантованою межею повної похибки. Наприклад, $f(x)=x^2$, $\xh=0$ дає $L=0$, хоча за $|x|\le E$ максимальна похибка дорівнює $E^2$.
+
+Якщо $f\in C^2$ на опуклому околі допустимої області й $\|H_f(z)\|_2\le H$, де $H_f$ --- матриця других похідних, то додатково
+\[
+ |r(h)|\le\frac H2\|h\|_2^2\le\frac H2\sum_{i=1}^nE_i^2.
+\]
+Ця умова є одним зі способів зробити оцінку залишку явною.
+
+\subsection*{Гарантована межа через похідні}
+\begin{theorem}
+Нехай
+\[
+ B=\prod_{i=1}^n[\xh_i-E_i,\xh_i+E_i]\subset U,
+\]
+а $f\in C^1(U)$ на відкритому околі $B$. Покладемо
+\[
+ M_i=\sup_{z\in B}|\partial_i f(z)|<\infty.
+\]
+Тоді для кожного $x\in B$
+\begin{equation}\label{eq:strict}
+ |f(x)-f(\xh)|\le\sum_{i=1}^nM_iE_i.
+\end{equation}
+\end{theorem}
+\begin{proof}
+Позначимо $h=x-\xh$. Опуклість $B$ гарантує $\xh+th\in B$ для $t\in[0,1]$. За правилом диференціювання складеної функції та формулою Ньютона--Лейбніца
+\[
+ f(x)-f(\xh)=\int_0^1\sum_{i=1}^n\partial_i f(\xh+th)h_i\,dt.
+\]
+Отже, модуль приросту не перевищує $\sum_i M_i|h_i|\le\sum_iM_iE_i$.
+\end{proof}
+Замість точних $M_i$ дозволено використовувати будь-які доведені верхні межі для них. Формула \eqref{eq:strict} не потребує статистичної незалежності збурень.
+
+\subsection*{Сума, добуток і частка}
+За $|a-\widehat a|\le E_a$, $|b-\widehat b|\le E_b$ для суми та різниці
+\[
+ |(a\pm b)-(\widehat a\pm\widehat b)|\le E_a+E_b.
+\]
+Для добутку точний розклад має вигляд
+\[
+ ab-\widehat a\widehat b=\widehat b\,h_a+\widehat a\,h_b+h_ah_b,
+\]
+тому
+\begin{equation}\label{eq:product}
+ |ab-\widehat a\widehat b|\le|\widehat b|E_a+|\widehat a|E_b+E_aE_b.
+\end{equation}
+Якщо $\widehat a>E_a\ge0$ та $\widehat b>E_b\ge0$, то за монотонністю
+\begin{equation}
+ ab\in[(\widehat a-E_a)(\widehat b-E_b),\;(\widehat a+E_a)(\widehat b+E_b)].
+\end{equation}
+При $\widehat a=2$, $\widehat b=3$, $E_a=E_b=0{,}01$:
+\[
+ \widehat S=6,\quad L=0{,}05,\quad E_S=0{,}0501,\quad S\in[5{,}9501;6{,}0501].
+\]
+Загальна теорема з $M_a=3{,}01$, $M_b=2{,}01$ дає правильну, але менш тісну межу $0{,}0502$.
+
+Для $\rho=m/V$ на області $V>0$ маємо
+\[
+ \frac{\partial\rho}{\partial m}=\frac1V,\qquad
+ \frac{\partial\rho}{\partial V}=-\frac{m}{V^2}.
+\]
+Якщо $\widehat m>E_m\ge0$ та $\widehat V>E_V\ge0$, то
+\begin{equation}
+ \rho\in\left[\frac{\widehat m-E_m}{\widehat V+E_V},\;
+ \frac{\widehat m+E_m}{\widehat V-E_V}\right].
+\end{equation}
+Умова $\widehat V>E_V$ гарантує додатний знаменник на всьому допустимому інтервалі.
+
+\begin{remark}[Межі та стандартна невизначеність]
+Детерміновані гарантії $|h_i|\le E_i$ є іншою моделлю інформації, ніж задані дисперсії чи стандартні невизначеності. Квадратичне статистичне поєднання не замінює оцінку \eqref{eq:strict} без відповідних імовірнісних припущень.
+\end{remark}
+\end{document}
