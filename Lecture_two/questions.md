@@ -7,5 +7,6 @@
 5. Скільки треба додати "контрасту" для того щоб коло з'явилось явно?
 6. Чому сірник/свічка вночі додає багато видимості, а вдень майже нічо не змінює?
 7. Якщо фото вночі і темне, чи треба додати багато чи трошки? Якщо фото вдень, чи "трошки" врятує?
-8. Що таке гамма-корекція? <img width="1019" height="586" alt="image" src="https://github.com/user-attachments/assets/5e4352f3-3041-401a-87d8-6db4af2fcfbe" />
+8. Що таке гамма-корекція? <img width="1019" height="586" alt="image" src="https://github.com/user-attachments/assets/5e4352f3-3041-401a-87d8-6db4af2fcfbe" /> <img width="1467" height="737" alt="image" src="https://github.com/user-attachments/assets/7ae2d75f-1b5f-4a6c-8116-36fa474b834f" />
+
 
